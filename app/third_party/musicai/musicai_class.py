@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from musicai_sdk import MusicAiClient
 import json
 
-from tools import download_youtube_video_as_mp3,json_response
+from app.tools import download_youtube_video_as_mp3,json_response
 
 from moviepy.editor import AudioFileClip
 
