@@ -71,3 +71,19 @@ async def process_song():
         
     return result
 
+@bp.route('/signup', methods=['POST'])
+def signup():
+    if request.method == 'POST':
+        print(request.json)
+        return userController().signup(request.json)
+    else:
+        return jsonify("Not Supported"), 405
+    
+@bp.route('/login', methods=['POST'])
+def login():
+    if request.method == 'POST':
+        print(request.json)
+        return userController().login(request.json)
+    else:
+        return jsonify("Not Supported"), 405
+
