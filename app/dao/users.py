@@ -20,10 +20,10 @@ class userDAO:
         return result
     
 
-    def insertUser(self, firstname, lastname, username, dob, password, type):
+    def signup(self, firstname, lastname, username, email, dob, password, type):
         cursor = self.conn.cursor()
-        query = "insert into users(user_id, firstname, lastname, username, dob, password, type) values (%s, %s, %s, %s, %s, %s, %s) on conflict do nothing returning uid;"
-        cursor.execute(query, (1, firstname, lastname, username, dob, password, type))
+        query = "insert into users(first_name, last_name, username, email, dob, password, type) values (%s, %s, %s, %s, %s, %s, %s) on conflict do nothing returning user_id;"
+        cursor.execute(query, (firstname, lastname, username, email, dob, password, type))
 
         uidfetch = cursor.fetchone()
         if uidfetch is None:
@@ -32,4 +32,13 @@ class userDAO:
             uid = uidfetch[0]
         self.conn.commit()
         return uid
+    
+    def login(self, username, password):
+        cursor = self.conn.cursor()
+        query = "select * from users where username = %s and password = %s"
+        cursor.execute(query, (username, password))
+        getResult = []
+        for row in cursor:
+            getResult.append(row)
+        return getResult
     
