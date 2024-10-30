@@ -1,2 +1,11 @@
-# teamJ_backend
-This is the repository for the backend part of Team J's Capstone Project Fall Semester 2024
+# Chordmate Backend Repository
+
+To start the app for testing run:
+```bash
+flask run
+```
+
+## Members:
+- #### Alan G. Mercado Berberena
+- #### Raul A. Rivera Rodriguez
+- #### Diego E. Laboy Pérez
