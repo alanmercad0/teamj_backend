@@ -9,7 +9,7 @@ from mutagen.mp3 import MP3
 from flask_cors import CORS, cross_origin
 import requests
 import json
-
+import os
 
 import asyncio
 bp = Blueprint('main', __name__)
@@ -51,30 +51,38 @@ async def process_song():
     shazam_instance = ShazamAPIClass()
     musicai_instance = MusicAIClass()
     mp3= download_youtube_video_as_mp3(ytb_url,'./app/third_party/shazam')
-    print(f"MP3 file: {mp3}")
+    # print(f"MP3 file: {mp3}")
 
     checking_mp3 = MP3(mp3)
-    print(f"Checking MP3 object: {mp3}")
+    # print(f"Checking MP3 object: {mp3}")
 
     length_in_seconds = checking_mp3.info.length
     minutes, seconds = divmod(length_in_seconds, 60)
-    print(f"Length of the MP3 file: {int(minutes)} minutes and {int(seconds)} seconds")
+    # print(f"Length of the MP3 file: {int(minutes)} minutes and {int(seconds)} seconds")
     if minutes <= 4:
         recognize_song = await shazam_instance.recognize_track(mp3)
+        print(recognize_song)
         checkSong = songsController().getSongChords(title=recognize_song[1])
-        if checkSong is not None:
-            return jsonify({'id':checkSong['song_id']})
+        # print(checkSong)
+        # print(recognize_song)
+        if recognize_song == 'None found':
+            return jsonify(Error='No sound found from URL')
         else:
-            new_job = await musicai_instance.create_job('new job',mp3)
-            print(new_job[1], recognize_song)
-            chords = getChordJson(new_job[1]['chords'])
-            bpm = new_job[1]['BPM']
-            song_id = songsDAO().newSong(recognize_song[1], recognize_song[2], '', chords, bpm)
-            # result = {'song': recognize_song, 'chords': chords, 'bpm': bpm}
-            return jsonify({'id': song_id})
+            checkSong = songsController().getSongChords(title=recognize_song[1])
+            if checkSong is not None:
+                os.remove(mp3)
+                return jsonify({'id':checkSong['song_id']})
+            else:
+                new_job = await musicai_instance.create_job('new job',mp3)
+                # print(new_job[1], recognize_song)
+                chords = getChordJson(new_job[1]['chords'])
+                bpm = new_job[1]['BPM']
+                song_id = songsDAO().newSong(recognize_song[1], recognize_song[2], recognize_song[3], chords, bpm)
+                os.remove(mp3)
+                # result = {'song': recognize_song, 'chords': chords, 'bpm': bpm}
+                return jsonify({'id': song_id})
     else:
         result = f"Invalid Song: Song must be less than 4:00 minutes. Song Length {minutes}:{seconds}"
-        print(result)
     return result
 
 @bp.route('/signup', methods=['POST'])

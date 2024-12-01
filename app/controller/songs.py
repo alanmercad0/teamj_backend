@@ -50,6 +50,7 @@ class songsController:
             song = dao.getSongByTitle(title)
             if song is not None:
                 songChords = dao.getSongChords(song[0])
+                # print(songChords)
                 chords = json.loads(songChords[3])
                 result = {}
                 result['song_id'] = song[0]
@@ -62,11 +63,14 @@ class songsController:
             song = dao.getSongById(id)
             if song is not None:
                 songChords = dao.getSongChords(song[0])
+                print(song)
                 chords = json.loads(songChords[3])
                 result = {}
                 result['song_id'] = song[0]
                 result['chords'] = chords
                 result['bpm'] = song[4]
+                result['title'] = song[1]
+                result['artist'] = song[3]
                 return result
             else:
                 return None
