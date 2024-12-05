@@ -1,5 +1,6 @@
 from app.controller.users import userController
 from app.controller.songs import songsController
+from app.controller.recommendation import recommendationController
 from app.dao.songs import songsDAO
 from flask import Blueprint, render_template,jsonify, Flask,request
 from app.third_party.shazam.shazam_class import ShazamAPIClass
@@ -154,5 +155,10 @@ def checkIfLiked():
     if id is not None:
         return userController().checkIfLiked(id, song_id) 
     return jsonify(error='missing info'), 400
+@bp.route('/getRecommendations')
+def getRecommendations():
+    title = request.args.get('title')
+    artist = request.args.get('artist')
 
+    return recommendationController().getRecommendation(title, artist)
 

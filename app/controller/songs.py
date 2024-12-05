@@ -1,4 +1,3 @@
-
 from flask import jsonify
 from app.dao.songs import songsDAO
 import json
