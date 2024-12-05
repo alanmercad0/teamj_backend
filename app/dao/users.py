@@ -1,5 +1,6 @@
 from app.config.db_config import dbconfig
 import psycopg2
+import datetime
 
 class userDAO:
 
@@ -41,4 +42,54 @@ class userDAO:
         for row in cursor:
             getResult.append(row)
         return getResult
+    
+
+    def addToHistory(self, uid, song_id):
+        cursor = self.conn.cursor()
+        query = "insert into user_history(user_id, song_id) values (%s,%s) returning history_id"
+        cursor.execute(query, (uid, song_id))
+        insertId = cursor.fetchone()
+        self.conn.commit()
+        return insertId
+    
+    def getHistory(self, uid):
+        # print('dao',uid)
+        cursor = self.conn.cursor()
+        query = """select s.song_id, date_uploaded, artist, title, genre, 
+                        EXISTS (
+                            SELECT *
+                            FROM liked_songs liked
+                            WHERE liked.song_id = s.song_id and liked.user_id = %s
+                        ) AS liked
+                    from user_history as h, songs as s where h.song_id = s.song_id and h.user_id = %s"""
+        cursor.execute(query, (uid, uid))
+        result = []
+        for row in cursor:
+            print('row',row)
+            result.append(row)
+        return result
+    
+    def checkIfLiked(self, uid, song_id):
+        cursor = self.conn.cursor()
+        query = "select * from liked_songs where user_id = %s and song_id = %s"
+        cursor.execute(query, (uid, song_id))
+        check = cursor.fetchone()
+        return check
+    
+    def likeSong(self, uid, song_id):
+        cursor = self.conn.cursor()
+        query = "insert into liked_songs(user_id, song_id) values (%s,%s) returning user_id"
+        cursor.execute(query, (uid, song_id))
+        insertId = cursor.fetchone()
+        self.conn.commit()
+        return insertId
+    
+    def dislikeSong(self, uid, song_id):
+        cursor = self.conn.cursor()
+        query = "delete from liked_songs where user_id = %s and song_id = %s returning user_id"
+        cursor.execute(query, (uid, song_id))
+        insertId = cursor.fetchone()
+        self.conn.commit()
+        return insertId
+
     

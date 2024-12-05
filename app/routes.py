@@ -119,5 +119,40 @@ def getSongChords():
         return songsController().getSongChords(id=id) 
     return jsonify(error='missing info'), 400
     
+@bp.route('/addToHistory', methods=['POST'])
+def addToHistory():
+    if request.method == 'POST':
+        return userController().addToHistory(request.json)
+    else:
+        return jsonify("Not Supported"), 405 
+    
+@bp.route('/getHistory')
+def getHistory():
+    id = request.args.get('id')
+    if id is not None:
+        return userController().getHistory(id) 
+    return jsonify(error='missing info'), 400
+
+@bp.route('/likeSong', methods=['POST'])
+def likeSong():
+    if request.method == 'POST':
+        return userController().likeSong(request.json)
+    else:
+        return jsonify("Not Supported"), 405 
+    
+@bp.route('/dislikeSong', methods=['POST'])
+def dislikeSong():
+    if request.method == 'POST':
+        return userController().dislikeSong(request.json)
+    else:
+        return jsonify("Not Supported"), 405 
+    
+@bp.route('/checkIfLiked')
+def checkIfLiked():
+    id = request.args.get('id')
+    song_id = request.args.get('song_id')
+    if id is not None:
+        return userController().checkIfLiked(id, song_id) 
+    return jsonify(error='missing info'), 400
 
 
