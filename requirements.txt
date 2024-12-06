@@ -172,7 +172,7 @@ python-dotenv==1.0.1
 
 pytz==2024.2
 
-pywin32==308
+# pywin32==308
 
 pyzmq==26.2.0
 
