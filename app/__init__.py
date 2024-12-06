@@ -1,10 +1,13 @@
 from flask import Flask
 
-def create_app():
-    app = Flask(__name__)
+app = Flask(__name__)
+
+# Import routes
+from app import routes
+app.register_blueprint(routes.bp)
+# def create_app():
     
-    # Import routes
-    from app import routes
-    app.register_blueprint(routes.bp)
-    
-    return app
+#     return app
+
+if __name__ == '__main__':
+    app.run()
