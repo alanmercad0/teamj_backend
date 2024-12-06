@@ -1,4 +1,4 @@
-aiofiles==23.2.1
+��aiofiles==23.2.1
 
 aiohappyeyeballs==2.4.3
 
@@ -73,6 +73,8 @@ google-auth==2.36.0
 google-auth-httplib2==0.2.0
 
 googleapis-common-protos==1.66.0
+
+gunicorn==23.0.0
 
 httplib2==0.22.0
 
@@ -172,7 +174,7 @@ python-dotenv==1.0.1
 
 pytz==2024.2
 
-# pywin32==308
+pywin32==308
 
 pyzmq==26.2.0
 
