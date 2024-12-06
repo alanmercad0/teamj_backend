@@ -134,6 +134,13 @@ def getHistory():
         return userController().getHistory(id) 
     return jsonify(error='missing info'), 400
 
+@bp.route('/getLikedSongs')
+def getLikedSongs():
+    id = request.args.get('id')
+    if id is not None:
+        return userController().getLikedSongs(id) 
+    return jsonify(error='missing info'), 400
+
 @bp.route('/likeSong', methods=['POST'])
 def likeSong():
     if request.method == 'POST':

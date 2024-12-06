@@ -87,6 +87,19 @@ class userController:
             result.append(item)
         return jsonify(result)
     
+    def getLikedSongs(self, id):
+        dao = userDAO()
+        result_tuples = dao.getLikedSongs(id)
+        result = []
+        for row in result_tuples:
+            item = {}
+            item['id'] = row[0]
+            item['artist'] = row[1]
+            item['title'] = row[2]
+            item['genre'] = row[3] 
+            result.append(item)
+        return jsonify(result)
+    
     def likeSong(self, json):
         if json:
             dao = userDAO()

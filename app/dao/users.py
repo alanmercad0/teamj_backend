@@ -61,8 +61,22 @@ class userDAO:
                             FROM liked_songs liked
                             WHERE liked.song_id = s.song_id and liked.user_id = %s
                         ) AS liked
-                    from user_history as h, songs as s where h.song_id = s.song_id and h.user_id = %s"""
+                    from user_history as h, songs as s where h.song_id = s.song_id and h.user_id = %s
+                    order by date_uploaded desc"""
         cursor.execute(query, (uid, uid))
+        result = []
+        for row in cursor:
+            print('row',row)
+            result.append(row)
+        return result
+    
+    def getLikedSongs(self, uid):
+        # print('dao',uid)
+        cursor = self.conn.cursor()
+        query = """select s.song_id, artist, title, genre
+                    from liked_songs as l, songs as s where l.song_id = s.song_id and l.user_id = %s
+                    order by artist, title"""
+        cursor.execute(query, (uid, ))
         result = []
         for row in cursor:
             print('row',row)
