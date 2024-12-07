@@ -3,6 +3,8 @@ import yt_dlp,os,json
 def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/musicai'):
     # Step 1: Download the YouTube video as audio
     ydl_opts = {
+        'username': 'chordmate40@gmail.com',
+        'password': 'aXXCX84gZmboa7BflwC8',
         'format': 'bestaudio/best',
         'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
         'postprocessors': [{
