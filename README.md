@@ -1,4 +1,8 @@
 # Chordmate Backend Repository
+Pre-requirement for running app:
+```bash
+pip install -r requirements.txt
+```
 
 To start the app for testing run:
 ```bash
