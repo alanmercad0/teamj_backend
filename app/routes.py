@@ -4,7 +4,8 @@ from app.controller.recommendation import recommendationController
 from app.dao.songs import songsDAO
 from flask import Blueprint, render_template,jsonify, Flask,request
 from app.third_party.shazam.shazam_class import ShazamAPIClass
-from app.third_party.musicai.musicai_class import MusicAIClass,download_youtube_video_as_mp3
+from app.third_party.musicai.musicai_class import MusicAIClass
+from app.tools import *
 from pprint import pprint
 from mutagen.mp3 import MP3
 from flask_cors import CORS, cross_origin
@@ -51,7 +52,7 @@ async def process_song():
     ytb_url = request.args.get('ytb_url')
     shazam_instance = ShazamAPIClass()
     musicai_instance = MusicAIClass()
-    mp3= download_youtube_video_as_mp3(ytb_url,'./app/third_party/shazam')
+    mp3= authenticate_and_download(ytb_url,'./app/third_party/shazam')
     # print(f"MP3 file: {mp3}")
 
     checking_mp3 = MP3(mp3)

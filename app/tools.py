@@ -4,7 +4,34 @@ from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import json
 
+def authenticate_and_download(youtube_url,install_path):
+    credentials = authenticate_user()
+    save_cookies(credentials=credentials)
+    mp3 = download_youtube_video_as_mp3(youtube_url,install_path)
+    return mp3
 
+
+def save_cookies(credentials, cookies_file='cookies.txt'):
+    # Extract the access token from the credentials
+    access_token = credentials.token
+
+    # Create a cookies file compatible with yt-dlp
+    cookies = [
+        {
+            'domain': '.youtube.com',
+            'path': '/',
+            'secure': True,
+            'expires': None,
+            'name': 'Authorization',
+            'value': f'Bearer {access_token}',
+        }
+    ]
+
+    # Write cookies to a file in the correct format
+    with open(cookies_file, 'w') as f:
+        for cookie in cookies:
+            f.write(f"{cookie['domain']}\tTRUE\t{cookie['path']}\t{str(cookie['secure']).upper()}\t{cookie['expires'] or 0}\t{cookie['name']}\t{cookie['value']}\n")
+    print(f"Cookies saved to {cookies_file}")
 
 
 def get_video_details(video_id, credentials):
@@ -48,7 +75,7 @@ def authenticate_user():
 
 
 
-def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/musicai'):
+def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/musicai',cookies_file='cookies.txt'):
     # Step 1: Download the YouTube video as audio
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -58,6 +85,7 @@ def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/mu
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
+        'cookies_file':cookies_file
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
