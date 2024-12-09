@@ -2,7 +2,6 @@ import yt_dlp,os,json
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
-from config.client_config import web
 import json
 
 
@@ -30,13 +29,9 @@ def authenticate_user():
 
     print("Line after scopes")
 
-    # Convert to JSON
-    with open('client_config.json', 'w') as json_file:
-        json.dump(web, json_file, indent=4)
-
     # Initialize the OAuth 2.0 flow
     flow = InstalledAppFlow.from_client_secrets_file(
-        'client_config.json',  # Your client ID and secret file
+        'client_secrets.json',  # Your client ID and secret file
         scopes=scopes
     )
     print("OAuth 2.0 flow initialized")
