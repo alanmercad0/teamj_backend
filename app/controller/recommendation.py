@@ -27,7 +27,7 @@ class recommendationController:
 
         # recommended_songs = self.add_youtube_links(recommended_songs)
 
-        return recommended_songs.to_json()
+        return recommended_songs[1:].to_json()
         
 
     def get_similar_songs(self, song_features, df, top_n=11):
@@ -71,33 +71,3 @@ class recommendationController:
 
         recommended_songs = df_filtered.sort_values(by='similarity', ascending=False).head(top_n)
         return recommended_songs
-    
-    def add_youtube_links(self, df):
-        df['Youtube Links'] = df.apply(
-            lambda row: self.youtubeLink(row['track_name'], row['artists']), axis=1
-        )
-        return df
-
-        
-    def youtubeLink(self, title, artist, max_results=5):
-        API_KEY = 'AIzaSyBLFzYgN7H1PAnJEyiwbSjcYCtP0dGYbUA'
-        youtube = build('youtube', 'v3', developerKey=API_KEY)
-
-        query = f'{title} {artist}'
-        
-        request = youtube.search().list(
-            q=query,
-            part='snippet',
-            type='video',
-            maxResults=1
-        )
-        
-        response = request.execute()
-
-        video_urls = []
-        for item in response['items']:
-            video_id = item['id']['videoId']
-            video_url = f'https://www.youtube.com/watch?v={video_id}'
-            video_urls.append(video_url)
-
-        return video_urls[0]
