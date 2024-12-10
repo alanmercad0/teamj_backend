@@ -162,10 +162,41 @@ def checkIfLiked():
     if id is not None:
         return userController().checkIfLiked(id, song_id) 
     return jsonify(error='missing info'), 400
+
 @bp.route('/getRecommendations')
 def getRecommendations():
     title = request.args.get('title')
     artist = request.args.get('artist')
 
-    return recommendationController().getRecommendation(title, artist)
+    if not title or not artist:
+        return jsonify({'error': 'Missing title or artist'}), 400
 
+    try:
+        recommendations = recommendationController().getRecommendation(title, artist)
+        if not recommendations:
+            return jsonify({'error': 'No recommendations found'}), 404
+        
+        return recommendations, 200
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'error': 'An unexpected error occurred'}), 500
+
+@bp.route('/setRecommendationHistory', methods=['POST'])
+def setRecommendationHistory():
+    if request.method == 'POST':
+        uid = request.args.get('uid')
+        title = request.args.get('title')
+        artist = request.args.get('artist')
+        genre = request.args.get('genre')
+        popularity = request.args.get('popularity')
+        return recommendationController().storeRecommendationHistory(uid, title, artist, genre, popularity) 
+    else:
+        return jsonify("Not Supported"), 405
+
+@bp.route('/getRecommendationHistory')
+def getRecommendationHistory():
+    uid = request.args.get('id')
+    if uid is not None:
+        return recommendationController().getHistory(uid) 
+    return jsonify(error='missing info'), 400

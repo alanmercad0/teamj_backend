@@ -7,6 +7,15 @@ from googleapiclient.discovery import build
 
 class recommendationController:
 
+    def getHistory(self, uid):
+        dao = recommendationDAO()
+        return jsonify(dao.getHistory(uid))
+    
+    def storeRecommendationHistory(self, uid, title, artist, genre, popularity):
+        dao = recommendationDAO()
+        return jsonify(dao.storeHistory(uid, title, artist, genre, popularity))
+
+
     def getRecommendation(self, title, artist):
         dao = recommendationDAO()
         df = dao.getDataset()
@@ -20,7 +29,6 @@ class recommendationController:
 
         return recommended_songs.to_json()
         
-
 
     def get_similar_songs(self, song_features, df, top_n=11):
         track_name, track_genre, artists = song_features

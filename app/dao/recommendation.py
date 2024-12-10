@@ -32,3 +32,38 @@ class recommendationDAO:
         songGenre = cursor.fetchone()
         print(songGenre)
         return songGenre
+    
+    def storeHistory(self, uid, title, artist, genre, popularity):
+        try:
+            with self.conn.cursor() as cursor:
+                # Check if the song already exists for the given user
+                check_query = '''
+                    SELECT 1 
+                    FROM recommendation_history 
+                    WHERE user_id = %s AND title = %s AND artist = %s;
+                '''
+                cursor.execute(check_query, (uid, title, artist))
+                result = cursor.fetchone()
+
+                if result:  # If a row is found, the song already exists
+                    return {"status": "exists", "message": "Song already exists in history"}
+
+                # Insert the song if it doesn't exist
+                insert_query = '''
+                    INSERT INTO recommendation_history (user_id, title, artist, genre, popularity)
+                    VALUES (%s, %s, %s, %s, %s);
+                '''
+                cursor.execute(insert_query, (uid, title, artist, genre, popularity))
+            self.conn.commit()
+            return {"status": "success", "message": "Song added to history"}
+        except Exception as e:
+            self.conn.rollback()
+            return {"status": "error", "message": str(e)}
+        
+    def getHistory(self, uid):
+        cursor = self.conn.cursor()
+        query = 'select * from recommendation_history where user_id = %s'
+        cursor.execute(query, (uid,))
+        history = cursor.fetchall()
+        
+        return history
