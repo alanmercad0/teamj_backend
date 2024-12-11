@@ -34,28 +34,39 @@ async def authenticate_and_download(youtube_url,install_path,authorization_url,s
    
     return ""
 
-
 def save_cookies(credentials, cookies_file='cookies.txt'):
     # Extract the access token from the credentials
     access_token = credentials.token
 
+    # Create a requests session to simulate a browser
     session = requests.Session()
-
-   # Create a requests session to simulate a browser
-    session = requests.Session()
-
-    # Add the authorization header with the Bearer token
     session.headers.update({
         'Authorization': f'Bearer {access_token}',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://www.youtube.com'
     })
 
-    cookie_jar = MozillaCookieJar(cookies_file)
-    for cookie in session.cookies:
-        cookie_jar.set_cookie(cookie)
+    try:
+        # Send a request to YouTube to obtain session cookies
+        response = session.get('https://www.youtube.com')
+        response.raise_for_status()
 
-    # Write the cookies to the file
-    cookie_jar.save(ignore_discard=True, ignore_expires=True)
+        # Debug: Print response headers and cookies
+        print("Response Headers:", response.headers)
+        print("Session Cookies:", session.cookies)
+
+        # Save cookies from the session into a cookies file compatible with yt-dlp
+        cookie_jar = MozillaCookieJar(cookies_file)
+        for cookie in session.cookies:
+            cookie_jar.set_cookie(cookie)
+
+        # Write the cookies to the file
+        cookie_jar.save(ignore_discard=True, ignore_expires=True)
+        print(f"Cookies saved to {cookies_file}")
+
+    except Exception as e:
+        print(f"Error fetching cookies: {e}")
 
 
 def get_video_details(video_id, credentials):

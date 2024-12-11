@@ -1,1 +1,8 @@
-.youtube.com	TRUE	/	TRUE	0	Authorization	Bearer ya29.a0ARW5m75KvupOAjL-My0cMBGVwx4hxtAmRVNAoknDOC-wzPVZCvbplttIHCsPe4W15V0xkbwC0FU2i9-cDMVygbtHyI9eWVQosrG1kYcbBls227ago42GpCeRjv8_9GgCcCHqULp7SmVXmTbuJmA_wVxeAGgFk0d2PMEaCgYKAdoSARMSFQHGX2Mi0XIJwvDHlc2zkFph5JQmjw0170
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+.youtube.com	TRUE	/	TRUE	1733947593	GPS	1
+.youtube.com	TRUE	/	TRUE	1749497793	VISITOR_INFO1_LIVE	AAqmmTk0ny8
+.youtube.com	TRUE	/	TRUE	1749497793	VISITOR_PRIVACY_METADATA	CgJQUhIEGgAgLg%3D%3D
+.youtube.com	TRUE	/	TRUE		YSC	F3U3t1lBvrU
