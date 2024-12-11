@@ -147,7 +147,7 @@ def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/mu
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'cookies_file':cookies_file,
+        'cookiefile':cookies_file,
         'verbose': True
     }
 

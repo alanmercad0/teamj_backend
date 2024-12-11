@@ -116,7 +116,7 @@ async def process_song():
     
     credentials = credenciales
     print("Credenciales",type(credentials))
-    # save_cookies(credentials=credentials)
+    save_cookies(credentials=credentials)
     mp3 = download_youtube_video_as_mp3(ytb_url,'./app/third_party/shazam')
     
     print(f"MP3 file: {mp3}")
