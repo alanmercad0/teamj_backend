@@ -40,6 +40,12 @@ from http.cookiejar import MozillaCookieJar
 import requests
 from http.cookiejar import MozillaCookieJar
 
+import requests
+from http.cookiejar import MozillaCookieJar
+
+import requests
+from http.cookiejar import MozillaCookieJar
+
 def save_cookies(credentials, cookies_file='cookies.txt'):
     # Extract the access token from the credentials
     access_token = credentials.token
@@ -54,8 +60,8 @@ def save_cookies(credentials, cookies_file='cookies.txt'):
     })
 
     try:
-        # Step 1: Visit accounts.google.com to initialize session cookies
-        google_auth_url = "https://accounts.google.com/o/oauth2/auth"
+        # Step 1: Visit accounts.google.com to initialize Google account session cookies
+        google_auth_url = "https://accounts.google.com/"
         google_auth_response = session.get(google_auth_url)
         google_auth_response.raise_for_status()
 
@@ -71,7 +77,7 @@ def save_cookies(credentials, cookies_file='cookies.txt'):
         # Debug: Print cookies in the session
         print("Session Cookies:", session.cookies)
 
-        # Save cookies to a file compatible with yt-dlp
+        # Step 4: Save cookies to a file compatible with yt-dlp
         cookie_jar = MozillaCookieJar(cookies_file)
         for cookie in session.cookies:
             cookie_jar.set_cookie(cookie)
@@ -82,6 +88,7 @@ def save_cookies(credentials, cookies_file='cookies.txt'):
 
     except Exception as e:
         print(f"Error fetching cookies: {e}")
+
 
 
 
