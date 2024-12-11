@@ -8,6 +8,10 @@ from google_auth_oauthlib.flow import Flow
 from flask import redirect,url_for,session,request
 import json
 import webbrowser
+import requests
+from http.cookiejar import MozillaCookieJar
+
+
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # OAuth flow configuration
@@ -35,23 +39,23 @@ def save_cookies(credentials, cookies_file='cookies.txt'):
     # Extract the access token from the credentials
     access_token = credentials.token
 
-    # Create a cookies file compatible with yt-dlp
-    cookies = [
-        {
-            'domain': '.youtube.com',
-            'path': '/',
-            'secure': True,
-            'expires': None,
-            'name': 'Authorization',
-            'value': f'Bearer {access_token}',
-        }
-    ]
+    session = requests.Session()
 
-    # Write cookies to a file in the correct format
-    with open(cookies_file, 'w') as f:
-        for cookie in cookies:
-            f.write(f"{cookie['domain']}\tTRUE\t{cookie['path']}\t{str(cookie['secure']).upper()}\t{cookie['expires'] or 0}\t{cookie['name']}\t{cookie['value']}\n")
-    print(f"Cookies saved to {cookies_file}")
+   # Create a requests session to simulate a browser
+    session = requests.Session()
+
+    # Add the authorization header with the Bearer token
+    session.headers.update({
+        'Authorization': f'Bearer {access_token}',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+    })
+
+    cookie_jar = MozillaCookieJar(cookies_file)
+    for cookie in session.cookies:
+        cookie_jar.set_cookie(cookie)
+
+    # Write the cookies to the file
+    cookie_jar.save(ignore_discard=True, ignore_expires=True)
 
 
 def get_video_details(video_id, credentials):
