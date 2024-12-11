@@ -2,13 +2,33 @@ import yt_dlp,os,json
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
-import json
 
-def authenticate_and_download(youtube_url,install_path):
-    credentials = authenticate_user()
-    save_cookies(credentials=credentials)
-    mp3 = download_youtube_video_as_mp3(youtube_url,install_path)
-    return mp3
+from google_auth_oauthlib.flow import Flow
+
+from flask import redirect,url_for,session,request
+import json
+import webbrowser
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+# OAuth flow configuration
+def get_flow():
+    return Flow.from_client_secrets_file(
+        'client_secrets.json',
+        scopes=['https://www.googleapis.com/auth/youtube.readonly'],
+        redirect_uri=url_for('main.oauth2callback', _external=True)
+    )
+
+async def authenticate_and_download(youtube_url,install_path,authorization_url,state):
+    
+    print("/n")
+    print("/n")
+    print("/n")
+    print("Redirecting",redirect(authorization_url))
+    print("/n")
+    print("/n")
+    print("/n")
+   
+    return ""
 
 
 def save_cookies(credentials, cookies_file='cookies.txt'):
@@ -50,23 +70,27 @@ def get_video_details(video_id, credentials):
     return video_details
 
 
-def authenticate_user():
-    # Scopes for YouTube access
-    scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
+# def authenticate_user():
+#     # Scopes for YouTube access
+#     scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
-    print("Line after scopes")
+#     print("Line after scopes")
 
-    # Initialize the OAuth 2.0 flow
-    flow = InstalledAppFlow.from_client_secrets_file(
-        'client_secrets.json',  # Your client ID and secret file
-        scopes=scopes
-    )
-    print("OAuth 2.0 flow initialized")
+#     # Initialize the OAuth 2.0 flow
+#     flow = InstalledAppFlow.from_client_secrets_file(
+#         'client_secrets.json',  # Your client ID and secret file
+#         scopes=scopes
+#     )
+#     print("OAuth 2.0 flow initialized")
 
-    # Get the user's credentials
-    credentials = flow.run_local_server(port=8080,prompt='consent',success_message="Authentication successful! You may close this tab.")
+#     # Get the user's credentials
+#     credentials = flow.run_local_server(
+#         port=8080,
+#         prompt='consent',
+#         success_message="Authentication successful! You may close this tab."
+#     )
     
-    print("Local Server Running")
+#     print("Local Server Running")
 
     # credentials = flow.credentials
 
