@@ -34,6 +34,12 @@ async def authenticate_and_download(youtube_url,install_path,authorization_url,s
    
     return ""
 
+import requests
+from http.cookiejar import MozillaCookieJar
+
+import requests
+from http.cookiejar import MozillaCookieJar
+
 def save_cookies(credentials, cookies_file='cookies.txt'):
     # Extract the access token from the credentials
     access_token = credentials.token
@@ -48,15 +54,24 @@ def save_cookies(credentials, cookies_file='cookies.txt'):
     })
 
     try:
-        # Send a request to YouTube to obtain session cookies
-        response = session.get('https://www.youtube.com')
-        response.raise_for_status()
+        # Step 1: Visit accounts.google.com to initialize session cookies
+        google_auth_url = "https://accounts.google.com/o/oauth2/auth"
+        google_auth_response = session.get(google_auth_url)
+        google_auth_response.raise_for_status()
 
-        # Debug: Print response headers and cookies
-        print("Response Headers:", response.headers)
+        # Step 2: Visit YouTube's homepage to capture site-specific cookies
+        youtube_response = session.get('https://www.youtube.com')
+        youtube_response.raise_for_status()
+
+        # Step 3: Visit a specific video page to capture additional cookies
+        video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Replace with any public video
+        video_response = session.get(video_url)
+        video_response.raise_for_status()
+
+        # Debug: Print cookies in the session
         print("Session Cookies:", session.cookies)
 
-        # Save cookies from the session into a cookies file compatible with yt-dlp
+        # Save cookies to a file compatible with yt-dlp
         cookie_jar = MozillaCookieJar(cookies_file)
         for cookie in session.cookies:
             cookie_jar.set_cookie(cookie)
@@ -67,6 +82,7 @@ def save_cookies(credentials, cookies_file='cookies.txt'):
 
     except Exception as e:
         print(f"Error fetching cookies: {e}")
+
 
 
 def get_video_details(video_id, credentials):
