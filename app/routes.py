@@ -2,19 +2,30 @@ from app.controller.users import userController
 from app.controller.songs import songsController
 from app.controller.recommendation import recommendationController
 from app.dao.songs import songsDAO
-from flask import Blueprint, render_template,jsonify, Flask,request
+from flask import Blueprint, render_template,jsonify, Flask,request, redirect, url_for, session
 from app.third_party.shazam.shazam_class import ShazamAPIClass
-from app.third_party.musicai.musicai_class import MusicAIClass,download_youtube_video_as_mp3
+from app.third_party.musicai.musicai_class import MusicAIClass
+from app.tools import *
 from pprint import pprint
 from mutagen.mp3 import MP3
 from flask_cors import CORS, cross_origin
 import requests
 import json
 import os
-
 import asyncio
 bp = Blueprint('main', __name__)
 CORS(bp)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+url = os.getenv('NEXT_PUBLIC_FRONT_URL')
+
+
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+credenciales = None
+
 
 @bp.route('/users', methods=['GET'])
 def getUsers():
@@ -25,7 +36,10 @@ def getUsers():
 
 @bp.route('/')
 def index():
-    return "Hello, Flask on Heroku!"
+    if 'credentials' in session:
+        return "You are authenticated!"
+    else:
+        return '<a href="/start_auth">Authenticate</a>'
 @bp.route('/test')
 def test():
     return "This is a test route"
@@ -45,14 +59,67 @@ def getChordJson(download_link):
             raise ValueError("Invalid JSON content")
     else:
         raise ValueError("Failed to download the JSON file")
+    
+@bp.route('/start_auth')
+def start_auth():
+    flow = get_flow()
+    authorization_url, state = flow.authorization_url()
+
+    # Save state in the session
+    session['state'] = state
+
+    # Redirect the user to the authorization URL
+    return redirect(authorization_url)
+
+@bp.route('/auth_status')
+def auth_status():
+    global credenciales
+    if credenciales is not None:
+        return jsonify({"status": "success", "message": "Authentication successful"})
+    else: 
+        return jsonify({"status": "failure", "message": "Authentication unsuccessfull"})
+        
+
+
+@bp.route('/oauth2callback')
+def oauth2callback():
+    flow = get_flow()
+
+    if 'state' not in session or session['state'] != request.args.get('state'):
+        session['auth_status'] = {"status": "error", "message": "State mismatch"}
+
+    # try:
+        # Complete the OAuth flow
+    flow.fetch_token(authorization_response=request.url)
+    credentials = flow.credentials
+
+    # Save credentials and status
+    global credenciales
+    credenciales = credentials
+    session['auth_status'] = {"status": "success", "message": "Authentication successful"}
+
+    return redirect(f"{url}/")
+
+
+
+
 
 @bp.route('/process_song')
 async def process_song():
+    if credenciales is None:
+        print("User not authenticated. Please authenticate first")
+        return jsonify(Error='User not authenticated. Please authenticate first.'), 401
     ytb_url = request.args.get('ytb_url')
     shazam_instance = ShazamAPIClass()
     musicai_instance = MusicAIClass()
-    mp3= download_youtube_video_as_mp3(ytb_url,'./app/third_party/shazam')
-    # print(f"MP3 file: {mp3}")
+
+    
+    credentials = credenciales
+    print("Credenciales",type(credentials))
+    save_cookies(credentials=credentials)
+    mp3 = download_youtube_video_as_mp3(ytb_url,'./app/third_party/shazam')
+    
+    print(f"MP3 file: {mp3}")
 
     checking_mp3 = MP3(mp3)
     # print(f"Checking MP3 object: {mp3}")
