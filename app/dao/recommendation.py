@@ -12,6 +12,13 @@ class recommendationDAO:
 
         self.conn = psycopg2.connect(connection_url)
 
+    def getLikedSongs(self, uid):
+        cursor = self.conn.cursor()
+        query = 'select genre, artist from songs where song_id = (select song_id from liked_songs where user_id = %s)'
+        cursor.execute(query, (uid,))
+        songs = cursor.fetchall()
+        return songs
+
     def getDataset(self):
         cursor = self.conn.cursor()
         query = 'select * from songdataset'

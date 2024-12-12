@@ -165,14 +165,16 @@ def checkIfLiked():
 
 @bp.route('/getRecommendations')
 def getRecommendations():
+    uid = request.args.get('user')
     title = request.args.get('title')
     artist = request.args.get('artist')
+    print(uid)
 
     if not title or not artist:
         return jsonify({'error': 'Missing title or artist'}), 400
 
     try:
-        recommendations = recommendationController().getRecommendation(title, artist)
+        recommendations = recommendationController().getRecommendation(title, artist, uid)
         if not recommendations:
             return jsonify({'error': 'No recommendations found'}), 404
         
