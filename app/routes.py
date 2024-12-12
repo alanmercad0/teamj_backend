@@ -89,7 +89,7 @@ def oauth2callback():
         session['auth_status'] = {"status": "error", "message": "State mismatch"}
 
     # try:
-        # Complete the OAuth flow
+        # Complete the OAuth flowS
     flow.fetch_token(authorization_response=request.url)
     credentials = flow.credentials
 
@@ -98,7 +98,7 @@ def oauth2callback():
     credenciales = credentials
     session['auth_status'] = {"status": "success", "message": "Authentication successful"}
 
-    return redirect(f"{url}/")
+    return redirect('https://chordmate.vercel.app')
 
 
 
