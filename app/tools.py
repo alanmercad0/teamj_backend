@@ -151,7 +151,7 @@ def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/mu
         'verbose': True
     }
 
-    print(type(cookies_file))
+    print(type(cookies_file), cookies_file)
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(youtube_url, download=True)
