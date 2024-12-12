@@ -137,7 +137,7 @@ def get_video_details(video_id, credentials):
 
 
 
-def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/musicai',cookies_file='cookies.txt'):
+def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/musicai', cookies_file='./cookies.txt'):
     # Step 1: Download the YouTube video as audio
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -147,11 +147,11 @@ def download_youtube_video_as_mp3(youtube_url, output_path='./app/third_party/mu
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'cookiefile':cookies_file,
+        'cookiefile': cookies_file,
         'verbose': True
     }
 
-    print(type(cookies_file), cookies_file)
+    print('this is the file', cookies_file)
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(youtube_url, download=True)
